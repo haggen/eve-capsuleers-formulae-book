@@ -9,7 +9,7 @@ function onOpen() {
 
 function _use() {
   var title = 'EVE Spreadsheet Extension';
-  var message = 'The formula EVEMARKET is now available, more information here: https://github.com/haggen/eve-spreadsheet-extension. Fly safe.';
+  var message = 'The formula EVEMARKET is now available, more information here: \nhttps://github.com/haggen/eve-spreadsheet-extension. \n\nFly safe.';
   var ui = SpreadsheetApp.getUi();
 
   ui.alert(title, message, ui.ButtonSet.OK);
@@ -45,7 +45,7 @@ function _fetch(type, name) {
 }
 
 /**
- * Fetches information about item prices in Eve, optionally, in a specific region or solar system.
+ * Fetches information about item prices in EVE, optionally, in a specific region or solar system.
  *
  * @param {"max"} value The value you're looking for, accepts "min" for minimum price, "max" for maximum price, or "avg" for average price.
  * @param {"buy"} order The type of the order, accepts "buy", "sell", or "all" for both types.

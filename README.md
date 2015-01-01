@@ -6,7 +6,7 @@
 - EVE SDE Rhea 1.0 109013
 - Market data from [EVE-Central](https://eve-central.com)
 
-### Read before use:
+## Read on:
 
 The add-on and the external services it depends on are not guaranteed to work 100% of the time. They might cease to exist without notice, and the data provided might not be reliable.
 

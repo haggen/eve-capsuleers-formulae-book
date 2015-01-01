@@ -1,100 +1,76 @@
+/**
+* EVE Capsuleer's Formulae Book
+* Version 1.0.0 2015-01-01T20:08:39-0300
+* more on github.com/haggen/eve-capsuleers-formulae-book
+*/
 
 function onInstall() {
   onOpen();
 }
 
 function onOpen() {
-  SpreadsheetApp.getUi().createAddonMenu().addItem('Use this', '_use').addToUi();
+  SpreadsheetApp.getUi().createAddonMenu().addItem('Use in this spreadsheet', 'use').addToUi();
 }
 
-function _use() {
-  var title = 'EVE Spreadsheet Extension';
-  var message = 'The formula EVEMARKET is now available, more information here: \nhttps://github.com/haggen/eve-spreadsheet-extension. \n\nFly safe.';
+function use() {
+  var title   = "EVE Capsuleer's Formulae Book";
+  var message = "Congratulations capsuleer, your Formulae Book is ready to use, you can find more information choosing the menu option Add-ons &rarr; EVE Capsuleer's Formulae Book &rarr; Help. \n\nFly safe.";
+
   var ui = SpreadsheetApp.getUi();
 
   ui.alert(title, message, ui.ButtonSet.OK);
 }
 
-function _fetch(type, name) {
-  var uri, cache, response, data;
+//
 
-  uri = 'https://eve-spreadsheet-extension-api.herokuapp.com/' + type + '.json?name=' + name;
+var FormulaeApi = {};
 
-  cache = CacheService.getUserCache();
+FormulaeApi.uri = 'https://eve-capsuleers-formulae-book.herokuapp.com';
 
-  Logger.log(uri);
+FormulaeApi.fetch = function(path, params) {
+  var cache = CacheService.getUserCache();
 
-  // cache.remove(uri);
-  response = cache.get(uri);
+  var uri = this.uri + path + '?';
 
-  if(!response) {
-    response = UrlFetchApp.fetch(uri).getContentText();
-
-    // Cache it for a month
-    cache.put(uri, response, 60 * 60 * 24 * 30);
-
-    // Avoid "service invoked too many times"
-    Utilities.sleep(1000);
-  }
-
-  Logger.log(response);
-
-  data = JSON.parse(response)[0];
-
-  return data && 'id' in data ? data.id : 0;
-}
-
-/**
- * Fetches information about item prices in EVE, optionally, in a specific region or solar system.
- *
- * @param {"max"} value The value you're looking for, accepts "min" for minimum price, "max" for maximum price, or "avg" for average price.
- * @param {"buy"} order The type of the order, accepts "buy", "sell", or "all" for both types.
- * @param {2000} amount Minimum amount of the item being bought or sold. Accepts "any" for any amount.
- * @param {"Veldspar"} item Exact name of the item.
- * @param {"Jita"} locationName Optional. Exact name of the region or solar system.
- * @return Average price of the item if it's found, 0 otherwise.
- * @customfunction
- */
-function EVEMARKET(value, order, amount, item, location) {
-  var uri, cache, response, locationName, locationID;
-
-  item = _fetch("types", item);
-
-  uri = 'http://api.eve-central.com/api/marketstat/json?typeid=' + item;
-
-  if(location) {
-    locationID = _fetch("regions", location);
-
-    if(locationID) {
-      uri += '&regionlimit=' + locationID;
-    } else {
-      locationID = _fetch("systems", location);
-      uri += '&usesystem=' + locationID;
+  for(var key in params) {
+    if(params.hasOwnProperty(key)) {
+      uri += key + '=' + encodeURIComponent(params[key]) + '&';
     }
   }
 
-  if(typeof amount == "number") {
-    uri += '&minQ=' + amount;
-  }
+  uri = uri.replace(/[?&]$/, '');
 
-  cache = CacheService.getUserCache();
-
-  Logger.log(uri);
-
-  cache.remove(uri);
-  response = cache.get(uri);
+  var response = cache.get(uri);
 
   if(!response) {
-    response = UrlFetchApp.fetch(uri).getContentText();
+    response = UrlFetchApp.fetch(uri);
 
-    // Cache it for 1 minute
-    cache.put(uri, response, 60);
+    if(response.getResponseCode() === 200) {
+      response = response.getContentText();
+      cache.put(uri, response, 60);
+    } else {
+      response = null;
+    }
 
-    // Avoid "service invoked too many times"
     Utilities.sleep(1000);
   }
 
-  Logger.log(response);
+  return response && JSON.parse(response);
+};
 
-  return JSON.parse(response)[0][order][value];
+/**
+* Fetch the minimum, maximum or average price of an item, optionally, in a specific region or solar system.
+*
+* @param {"max"} value The value you're looking for, accepts "min" for minimum price, "max" for maximum price, or "avg" for average price.
+* @param {"buy"} bid The type of the order, accepts "buy", "sell", or "all" for both types.
+* @param {10000} minimum Minimum order volume for it to be included. Accepts a number, or "any" for any amount.
+* @param {"Veldspar"} item Exact name of the item.
+* @param {"Jita"} location Optional. Exact name of the region or solar system.
+* @return {"14.6"} Price information of the item if it's found, 0 otherwise.
+*
+* @customfunction
+*/
+function EVEMARKET(value, bid, minimum, item, location) {
+  var response = FormulaeApi.fetch('/market', {item: item, minimum: minimum, location: location});
+  return response ? response[bid][value] : 0;
 }

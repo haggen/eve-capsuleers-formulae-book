@@ -1,31 +1,43 @@
-# EVE Spreadsheet Extension
+# EVE Capsuleer's Formulae Book
 
-> Fetch EVE market prices from Google Spreadsheets.
+> EVE related formulae for Google Spreadsheets.
 
-- Last update on 2014-12-26T12:08:32-0300
+- Last update on 2015-01-01T20:08:39-0300
 - EVE SDE Rhea 1.0 109013
 - Market data from [EVE-Central](https://eve-central.com)
 
+### Read before use:
+
+The add-on and the external services it depends on are not guaranteed to work 100% of the time. They might cease to exist without notice, and the data provided might not be reliable.
+
+All the effort I put here is pro-bono. If you feel like something's not right, missing or have any feedback you can contact me at hagg3n at gmail dot com, but I can't guarantee I'll respond in time or at all.
+
+Meanwhile enjoy.
+
 ## Usage:
 
-[Get the add-on](http://) then open your spreadsheet and choose the menu option **Add-ons** &rarr; **EVE Spreadsheet Extension** &rarr; **Use this**, and it's done.
+[Get the add-on](http://) then open your spreadsheet and choose the menu option **Add-ons** &rarr; **EVE Capsuleer's Formulae Book** &rarr; **Use in this spreadsheet**. Now you can start typing `=EVE` in any cell to see a list of all formulas available to you.
 
-From now on you'll have the formula `EVEMARKET` available in your spreadsheet.
+## Formulae:
 
-### Example:
+You can check out below all the formulas you'll have by using this add-on.
+
+### EVEMARKET
+
+#### Example:
 
 ```
-=EVEMARKET("max", "buy", 10000, "Veldspar", "Verge Vendor")
+=EVEMARKET("max", "buy", "any", "Veldspar", "Verge Vendor")
 ```
 
-### Arguments:
+#### Arguments:
 
-1. The first argument is what information you want, it accepts `min` for minimum price, `max` for maximum price, or `avg` for average price.
-2. The second argument is the type of order you want, it accepts `buy`, `sell`, or `all` for both.
-3. The third argument is the minimum amount required for the order to be included in the search, it also accepts `any` for any[1] amount.
-4. The fourth argument is the **exact name** of the item you're looking for, e.g. "Veldspar", "Retriever", "1MN Microwarpdrive I", etc.
-5. The final argument is optional, it's the **exact name** of the region or solar system you're interested in, e.g. "Sinq Laison", "The Forge", "Jita", "Trossere", etc. If it's not provided the formula includes orders from all regions.
+1. The value you're looking for, accepts "min" for minimum price, "max" for maximum price, or "avg" for average price.
+2. The order bid, accepts "buy", "sell", or "all" for both.
+3. Minimum order volume for it to be included. Accepts a number, or "any" for any amount.
+4. Exact name of the item. e.g. "Veldspar", "Retriever", "1MN Microwarpdrive I"
+5. Optional. Exact name of the region or solar system. e.g. "Sinq Laison", "The Forge", "Jita", "Trossere". If it's not provided the result include orders from all regions.
 
-Beware that the script depends on external services, meaning if any one of them are unresponsive, the formula won't work. Also the market data retrieved is cached for 1 minute.
+## License
 
-[1] Actually it's not really any amount, there's already a fixed minimum requirement in place for each type of item.
+See [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/).
